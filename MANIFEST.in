@@ -1,0 +1,4 @@
+include LICENSE.txt
+include HISTORY.md
+include Makefile
+include pyproject.toml

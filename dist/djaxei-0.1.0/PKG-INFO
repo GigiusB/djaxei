@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: djaxei
+Version: 0.1.0
+Summary: A django admin extension for importing exporting records from/to xls/ods
+License: MIT
+Author: Giovanni Bronzini
+Author-email: g.bronzini@gmail.com
+Requires-Python: >=2.7,<4
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8

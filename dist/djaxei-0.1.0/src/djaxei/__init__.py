@@ -1,0 +1,5 @@
+__author__ = 'Giovanni Bronzini'
+__email__ = 'g.bronzini@gmail.com'
+__version__ = '0.1.0'
+__name__ = 'djaxei'
+__description__ = 'A django admin extension for importing exporting records from/to xls/ods'

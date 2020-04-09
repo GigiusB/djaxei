@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "djaxei"
+version = "0.1.0"
+description = "A django admin extension for importing exporting records from/to xls/ods"
+authors = ["Giovanni Bronzini <g.bronzini@gmail.com>"]
+license = "MIT"
+include = ["README.md", "HISTORY.md", "Makefile"]
+
+[tool.poetry.dependencies]
+python = ">=2.7, <4"
+
+[tool.poetry.dev-dependencies]
+pytest = "<=5.0"
+#flake8 = "^3.7.9"
+#tox = "^3.14.5"
+#bumpversion = "^0.5.3"
+#pre-commit = "^2.1.1"
+#isort = "^4.3.21"
+
+tox = "^3.14.6"
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
