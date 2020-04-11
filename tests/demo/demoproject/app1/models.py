@@ -34,3 +34,12 @@ class DemoModel3(models.Model):
     char = models.CharField(max_length=255, blank=True, null=True)
     integer = models.IntegerField(blank=True, null=True)
 
+
+class DemoModel4(models.Model):
+    fk1 = models.ForeignKey(DemoModel2,
+                           on_delete=models.CASCADE)
+    fk2 = models.ForeignKey(DemoModel3,
+                            blank=True, null=True,
+                            on_delete=models.CASCADE)
+    char = models.CharField(max_length=255, blank=True, null=True)
+    integer = models.IntegerField(blank=True, null=True)

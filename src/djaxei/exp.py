@@ -11,7 +11,7 @@ class Exporter:
     def __init__(self, tmpdir=None, **kwargs):
         self.tmpdir = tmpdir
 
-    def xls_export(self, models, root=None, root_qs=None):
+    def xls_export(self, _models, root=None, root_qs=None):
         if (root and root_qs) or ((root or root_qs) is None):
             raise RuntimeError(_("Either a root object or a root queryset must be provided"))
 
@@ -23,7 +23,7 @@ class Exporter:
             sheets = {}
 
             lmodels = {}
-            for k, v in models.items():
+            for k, v in _models.items():
                 lname = k.lower()
                 model_name = lname.rsplit('.')[1]
                 lmodels[lname] = v
@@ -38,7 +38,7 @@ class Exporter:
             collector.collect(root_qs)
 
             def callback(obj):
-                fields = models.get(obj._meta.label_lower, None)
+                fields = lmodels.get(obj._meta.label_lower, None)
                 if fields:
                     sheets[obj._meta.model_name]['sheet'].write_row(sheets[obj._meta.model_name]['row_index'], 0,
                                                                     [getattr(obj, x) for x in fields])
