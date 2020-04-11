@@ -10,7 +10,7 @@ class TestEqual(object):
     def test_export(self, demomodel1):
         workbook_filename = Exporter().xls_export(
             {
-                'app1.DemoModel1': ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic', 'date', 'nullable', 'choice'],
+                'app1.demomodel1': ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic', 'date', 'nullable', 'choice'],
                 # 'app1.DemoModel2': ['id', 'questionnaire_id', 'sortid', 'has_summary', ] + L(
                 #     ['heading', 'text', 'long_text']),
                 # 'app1.DemoModel3': ['id', 'questionpage_id', 'can_have_multiple_answers', 'number', 'type',

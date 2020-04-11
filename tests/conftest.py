@@ -32,7 +32,7 @@ CHOICES_IDS = [x[0] for x in DemoModel1.CHOICES]
 class DemoModel1Factory(factory.DjangoModelFactory):
     integer = FuzzyInteger(1000)
     date = FuzzyDate(datetime.date(2008, 1, 1))
-    choices = FuzzyChoice(CHOICES_IDS)
+    choice = FuzzyChoice(CHOICES_IDS)
 
     class Meta:
         model = DemoModel1
@@ -40,5 +40,5 @@ class DemoModel1Factory(factory.DjangoModelFactory):
 
 @pytest.fixture
 def demomodel1(db):
-    ret =  DemoModel1Factory.create()
+    ret = DemoModel1Factory.create()
     return ret

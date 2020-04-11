@@ -3,6 +3,7 @@
 !.gitignore
 !.env.example
 !.envrc.example
+__pycache__
 
 poetry.lock
 db.sqlite3

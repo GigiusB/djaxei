@@ -17,7 +17,7 @@ class DemoModel1(models.Model):
     null_logic = models.NullBooleanField(default=None)
     date = models.DateField()
     nullable = models.CharField(max_length=255, null=True, default=None)
-    choices = models.IntegerField(choices=CHOICES)
+    choice = models.IntegerField(choices=CHOICES)
 
 
 class DemoModel2(models.Model):

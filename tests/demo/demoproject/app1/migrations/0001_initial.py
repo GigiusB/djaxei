@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('null_logic', models.NullBooleanField(default=None)),
                 ('date', models.DateField()),
                 ('nullable', models.CharField(default=None, max_length=255, null=True)),
-                ('choices', models.IntegerField(choices=[(1, 'Choice 1'), (2, 'Choice 2'), (3, 'Choice 3')])),
+                ('choice', models.IntegerField(choices=[(1, 'Choice 1'), (2, 'Choice 2'), (3, 'Choice 3')])),
                 ('fk', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
