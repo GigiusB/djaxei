@@ -1,15 +1,16 @@
 import os
 from tempfile import NamedTemporaryFile
 
-import xlsxwriter
 from django.contrib.admin.utils import NestedObjects
 from django.db import router
 from django.utils.translation import ugettext_lazy as _
+from openpyxl import Workbook
 
 
 class Exporter:
-    def __init__(self, tmpdir=None, **kwargs):
+    def __init__(self, dest=None, tmpdir=None, **kwargs):
         self.tmpdir = tmpdir
+        self.dest = dest
 
     def xls_export(self, _models, root=None, root_qs=None):
         if (root and root_qs) or ((root or root_qs) is None):
@@ -17,8 +18,9 @@ class Exporter:
 
         workbook = None
         try:
-            workbookfile = NamedTemporaryFile(dir=self.tmpdir, delete=False)
-            workbook = xlsxwriter.Workbook(workbookfile)
+            workbookfile = self.dest or NamedTemporaryFile(dir=self.tmpdir, delete=False)
+            workbook = Workbook()
+            del workbook['Sheet']
 
             sheets = {}
 
@@ -27,8 +29,8 @@ class Exporter:
                 lname = k.lower()
                 model_name = lname.rsplit('.')[1]
                 lmodels[lname] = v
-                sheets[model_name] = {'row_index': 1, 'sheet': workbook.add_worksheet(model_name)}
-                sheets[model_name]['sheet'].write_row(0, 0, v)
+                sheets[model_name] = workbook.create_sheet(title=model_name)
+                sheets[model_name].append(v)
 
             if root:
                 root_qs = root._meta.model.objects.filter(pk=root.pk)
@@ -40,12 +42,10 @@ class Exporter:
             def callback(obj):
                 fields = lmodels.get(obj._meta.label_lower, None)
                 if fields:
-                    sheets[obj._meta.model_name]['sheet'].write_row(sheets[obj._meta.model_name]['row_index'], 0,
-                                                                    [getattr(obj, x) for x in fields])
-                    sheets[obj._meta.model_name]['row_index'] += 1
+                    sheets[obj._meta.model_name].append([getattr(obj, x) for x in fields])
 
             collector.nested(callback)
-            workbook.close()
+            workbook.save(workbookfile)
             return workbookfile.name
 
         except Exception as e:

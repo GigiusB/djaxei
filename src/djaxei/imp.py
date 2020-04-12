@@ -1,10 +1,5 @@
-import os
-from tempfile import NamedTemporaryFile
+from collections import OrderedDict
 
-import xlsxwriter
-from django.contrib.admin.utils import NestedObjects
-from django.db import router
-from django.utils.translation import ugettext_lazy as _
 from openpyxl import load_workbook
 
 
@@ -12,11 +7,15 @@ class Importer:
     def __init__(self, tmpdir=None, **kwargs):
         self.tmpdir = tmpdir
 
-    def xls_import(self, file,  models=[], *args, **kwargs):
-        models = [x.lower() for x in models]
-        wb = load_workbook(file)
-        worksheets = {x: wb[x.split('.')[-1]] for x in models}
-        records = {}
-        for model_fqn, ws in worksheets.items():
-            for row in ws.iter_rows(values_only=True):
-                print(model_fqn, ws.title, row)
+    def xls_import(self, file, models_dict, *args, **kwargs):
+        wb = load_workbook(file, data_only=True)
+
+        for ws_name, callback in models_dict.items():
+            ws = wb[ws_name]
+            for rownum, row in enumerate(ws.iter_rows(values_only=True)):
+                if rownum == 0:
+                    header = row
+                else:
+                    callback(OrderedDict(zip(header, row)))
+        wb.close()
+

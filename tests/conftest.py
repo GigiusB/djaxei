@@ -30,6 +30,7 @@ def pytest_configure():
 
 CHOICES_IDS = [x[0] for x in DemoModel1.CHOICES]
 class DemoModel1Factory(factory.DjangoModelFactory):
+    char = FuzzyText(length=10, prefix='dm1_')
     integer = FuzzyInteger(1000)
     date = FuzzyDate(datetime.date(2008, 1, 1))
     choice = FuzzyChoice(CHOICES_IDS)
@@ -106,21 +107,29 @@ def records4(records2, records3):
 
 @pytest.fixture
 def mocked_writer():
-    def get_mocked_write_row(original, results):
-        def mocked_write_row(self, row, col, data, cell_format=None):
-            original(self, row, col, data, cell_format=None)
-            l = results.setdefault(self.name, [])
-            l.append(dict(
-                row=row,
-                col=col,
-                data=data,
-                cell_format=cell_format
-            ))
-        return mocked_write_row
+    #def create_sheet(self, title=None, index=None)
+    #def append(self, row):
+
+    def get_mocked_append(original, results):
+        def _f(self, row):
+            results[self.title].append(row)
+            return original(self, row)
+        return _f
+
+    def get_mocked_create_sheet(original, results):
+        def _f(self, title=None, index=None):
+            results[title] = []
+            return original(self, title, index)
+        return _f
+
 
     results = {}
-    from xlsxwriter.worksheet import Worksheet
-    original = Worksheet.write_row
-    Worksheet.write_row = get_mocked_write_row(original, results)
+    from openpyxl import Workbook
+    original_create_sheet = Workbook.create_sheet
+    from openpyxl.worksheet.worksheet import Worksheet
+    original_append = Worksheet.append
+    Worksheet.append = get_mocked_append(original_append, results)
+    Workbook.create_sheet = get_mocked_create_sheet(original_create_sheet, results)
     yield results
-    Worksheet.write_row = original
+    Workbook.create_sheet = original_create_sheet
+    Worksheet.append = original_append
