@@ -36,9 +36,9 @@ class DemoModel3(models.Model):
 
 
 class DemoModel4(models.Model):
-    fk1 = models.ForeignKey(DemoModel2,
+    fk2 = models.ForeignKey(DemoModel2,
                            on_delete=models.CASCADE)
-    fk2 = models.ForeignKey(DemoModel3,
+    fk3 = models.ForeignKey(DemoModel3,
                             blank=True, null=True,
                             on_delete=models.CASCADE)
     char = models.CharField(max_length=255, blank=True, null=True)

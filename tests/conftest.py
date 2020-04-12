@@ -79,33 +79,36 @@ def records1(db):
 @pytest.fixture
 def records2(records1):
     ret = []
-    for master in records1:
-        ret.append(DemoModel2Factory.create(fk=master))
+    for n in range(3):
+        for master in records1:
+            ret.append(DemoModel2Factory.create(fk=master))
     return ret
 
 
 @pytest.fixture
 def records3(records1):
     ret = []
-    for master in records1:
-        ret.append(DemoModel3Factory.create(fk=master))
+    for n in range(3):
+        for master in records1:
+            ret.append(DemoModel3Factory.create(fk=master))
     return ret
 
 
 @pytest.fixture
 def records4(records2, records3):
     ret = []
-    for n in range(8):
+    for n in range(15):
         master1 = random.choice(records2)
         master2 = random.choice(records3) if n % 3 !=0 else None
-        ret.append(DemoModel4Factory.create(fk1=master1, fk2=master2))
+        ret.append(DemoModel4Factory.create(fk2=master1, fk3=master2))
     return ret
 
 
 @pytest.fixture
 def mocked_writer():
-    def get_mocked_write_row(results):
+    def get_mocked_write_row(original, results):
         def mocked_write_row(self, row, col, data, cell_format=None):
+            original(self, row, col, data, cell_format=None)
             l = results.setdefault(self.name, [])
             l.append(dict(
                 row=row,
@@ -118,6 +121,6 @@ def mocked_writer():
     results = {}
     from xlsxwriter.worksheet import Worksheet
     original = Worksheet.write_row
-    Worksheet.write_row = get_mocked_write_row(results)
+    Worksheet.write_row = get_mocked_write_row(original, results)
     yield results
     Worksheet.write_row = original
