@@ -1,11 +1,10 @@
-# A django admin extension for imorting exporting records from/to xls/ods
+# A django admin extension for importing exporting records from/to xls/ods
 
 A Python library project template using:
 * pytest
 * flake8
 * tox
 * bumpversion
-* pre-commit
 * isort
 
 * Free software: MIT license
@@ -20,6 +19,3 @@ Features
 Credits
 -------
 
-Cookiecutter template by:
-
-  - G.Bronzini (https://www.singlewave.co.uk)
