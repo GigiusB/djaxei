@@ -3,6 +3,11 @@
 !.gitignore
 !.env.example
 !.envrc.example
+!.bumpversion.cfg
+!.flake8
+!.isort.cfg
+!.pre-commit-config.yaml
+
 __pycache__
 dist
 
