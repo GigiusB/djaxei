@@ -1,6 +1,6 @@
 # A django admin extension for importing exporting records from/to xls/ods
 
-A Python library project template using:
+A Python library project using:
 * pytest
 * flake8
 * tox
