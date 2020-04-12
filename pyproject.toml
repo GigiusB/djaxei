@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "djaxei"
-version = "version = 0.2.0"
+version = "0.2.0"
 description = "A django admin extension for importing exporting records from/to xls/ods"
 authors = ["Giovanni Bronzini <g.bronzini@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/GigiusB/djaxei.git"
+keywords = ["xls",]
 include = ["README.md", "HISTORY.md", "Makefile"]
 packages = [
     { include = "djaxei", from = "src" },
