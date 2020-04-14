@@ -5,5 +5,9 @@ class ImportException(Exception):
         self.cause = cause
 
     def __str__(self):
-        return "[%s]%s: %s" % (self.worksheet, self.cause.__class__.__name__, str(self.cause))
+        if hasattr(self.cause, 'reference'):
+            msg = "[%s:%s] %s: %s" % (self.worksheet, self.cause.reference, self.cause.__class__.__name__, str(self.cause))
+        else:
+            msg = "[%s] %s: %s" % (self.worksheet, self.cause.__class__.__name__, str(self.cause))
+        return msg
 

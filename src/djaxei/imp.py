@@ -20,7 +20,9 @@ class Importer:
                     header = row
                 else:
                     try:
-                        callback(OrderedDict(zip(header, row)))
+                        data_dict = OrderedDict(zip(header, row))
+                        data_dict = {k: v for k, v in data_dict.items() if k != None}
+                        callback(data_dict)
                     except Exception as e:
                         raise ImportException(e, worksheet=ws_name)
         wb.close()
