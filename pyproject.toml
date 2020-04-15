@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djaxei"
-version = "0.4.2"
+version = "0.4.3"
 description = "A django admin extension for importing exporting records from/to xls/ods"
 authors = ["Giovanni Bronzini <g.bronzini@gmail.com>"]
 license = "MIT"
