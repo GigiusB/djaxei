@@ -18,9 +18,8 @@ class Exporter:
 
         workbook = None
         try:
-            workbookfile = self.dest or NamedTemporaryFile(dir=self.tmpdir, delete=False)
+            workbookfile = self.dest or NamedTemporaryFile(dir=self.tmpdir, suffix=".xlsx", delete=False)
             workbook = Workbook()
-            del workbook['Sheet']
 
             sheets = {}
 
@@ -45,6 +44,7 @@ class Exporter:
                     sheets[obj._meta.model_name].append([getattr(obj, x) for x in fields])
 
             collector.nested(callback)
+            del workbook['Sheet']
             workbook.save(workbookfile)
             return workbookfile.name
 
