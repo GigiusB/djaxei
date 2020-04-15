@@ -1,3 +1,4 @@
+import importlib
 import random
 
 import datetime
@@ -9,6 +10,7 @@ import pytest
 from factory.fuzzy import FuzzyInteger, FuzzyDate, FuzzyChoice, FuzzyText
 
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
+from djaxei.providers import get_writer, get_implemetation_class
 
 
 @pytest.fixture(scope='session')
@@ -29,6 +31,8 @@ def pytest_configure():
 
 
 CHOICES_IDS = [x[0] for x in DemoModel1.CHOICES]
+
+
 class DemoModel1Factory(factory.DjangoModelFactory):
     char = FuzzyText(length=10, prefix='dm1_')
     integer = FuzzyInteger(1000)
@@ -100,36 +104,55 @@ def records4(records2, records3):
     ret = []
     for n in range(15):
         master1 = random.choice(records2)
-        master2 = random.choice(records3) if n % 3 !=0 else None
+        master2 = random.choice(records3) if n % 3 != 0 else None
         ret.append(DemoModel4Factory.create(fk2=master1, fk3=master2))
     return ret
 
 
 @pytest.fixture
-def mocked_writer():
-    #def create_sheet(self, title=None, index=None)
-    #def append(self, row):
+def mocked_writer_factory():
+    def _f(implementation=None):
+        writer = get_writer(implementation)
+        implementation = get_implemetation_class(writer)
 
-    def get_mocked_append(original, results):
-        def _f(self, row):
-            results[self.title].append(row)
-            return original(self, row)
-        return _f
+        orig_write_data = writer.write_data
+        results = {}
 
-    def get_mocked_create_sheet(original, results):
-        def _f(self, title=None, index=None):
-            results[title] = []
-            return original(self, title, index)
-        return _f
+        def write_data(obj, data):
+            writer._results.update(data)
+            obj.orig_write_data(data)
 
+        writer.write_data = write_data
 
-    results = {}
-    from openpyxl import Workbook
-    original_create_sheet = Workbook.create_sheet
-    from openpyxl.worksheet.worksheet import Worksheet
-    original_append = Worksheet.append
-    Worksheet.append = get_mocked_append(original_append, results)
-    Workbook.create_sheet = get_mocked_create_sheet(original_create_sheet, results)
-    yield results
-    Workbook.create_sheet = original_create_sheet
-    Worksheet.append = original_append
+        yield writer
+
+    return _f
+
+# @pytest.fixture
+# def mocked_writer():
+#     #def create_sheet(self, title=None, index=None)
+#     #def append(self, row):
+#
+#     def get_mocked_append(original, results):
+#         def _f(self, row):
+#             results[self.title].append(row)
+#             return original(self, row)
+#         return _f
+#
+#     def get_mocked_create_sheet(original, results):
+#         def _f(self, title=None, index=None):
+#             results[title] = []
+#             return original(self, title, index)
+#         return _f
+#
+#
+#     results = {}
+#     from openpyxl import Workbook
+#     original_create_sheet = Workbook.create_sheet
+#     from openpyxl.worksheet.worksheet import Worksheet
+#     original_append = Worksheet.append
+#     Worksheet.append = get_mocked_append(original_append, results)
+#     Workbook.create_sheet = get_mocked_create_sheet(original_create_sheet, results)
+#     yield results
+#     Workbook.create_sheet = original_create_sheet
+#     Worksheet.append = original_append

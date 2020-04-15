@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import pytest
 
-from djaxei import Importer
+#from djaxei import Importer
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
 
 

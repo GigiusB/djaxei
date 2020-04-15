@@ -11,7 +11,8 @@ from djaxei import Exporter
 @pytest.mark.django_db
 class TestExport(object):
 
-    def test_exporter(self, mocked_writer, records4):
+    def test_exporter(self, mocked_writer_factory, records4):
+        mocked_writer = mocked_writer_factory()
         from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3
         root = random.choice(DemoModel1.objects.all())
         data = {
