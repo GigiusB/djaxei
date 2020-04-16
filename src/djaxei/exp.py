@@ -4,7 +4,8 @@ from tempfile import NamedTemporaryFile
 from django.contrib.admin.utils import NestedObjects
 from django.db import router
 from django.utils.translation import ugettext_lazy as _
-from openpyxl import Workbook
+
+from djaxei.providers.xlwt_provider import get_workbook_impl
 
 
 class Exporter:
@@ -17,9 +18,9 @@ class Exporter:
             raise RuntimeError(_("Either a root object or a root queryset must be provided"))
 
         workbook = None
+        workbookfile = None
         try:
             workbookfile = self.dest or NamedTemporaryFile(dir=self.tmpdir, suffix=".xlsx", delete=False)
-            workbook = Workbook()
 
             sheets = {}
 
@@ -28,8 +29,7 @@ class Exporter:
                 lname = k.lower()
                 model_name = lname.rsplit('.')[1]
                 lmodels[lname] = v
-                sheets[model_name] = workbook.create_sheet(title=model_name)
-                sheets[model_name].append(v)
+                sheets[model_name] = [v, ]
 
             if root:
                 root_qs = root._meta.model.objects.filter(pk=root.pk)
@@ -44,8 +44,10 @@ class Exporter:
                     sheets[obj._meta.model_name].append([getattr(obj, x) for x in fields])
 
             collector.nested(callback)
-            del workbook['Sheet']
-            workbook.save(workbookfile)
+
+            Workbook = get_workbook_impl()()
+            Workbook.write_data(workbookfile, sheets)
+
             return workbookfile.name
 
         except Exception as e:

@@ -1,3 +1,4 @@
+import importlib
 import random
 
 import datetime
@@ -9,6 +10,7 @@ import pytest
 from factory.fuzzy import FuzzyInteger, FuzzyDate, FuzzyChoice, FuzzyText
 
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
+from djaxei import providers
 
 
 @pytest.fixture(scope='session')
@@ -106,30 +108,7 @@ def records4(records2, records3):
 
 
 @pytest.fixture
-def mocked_writer():
-    #def create_sheet(self, title=None, index=None)
-    #def append(self, row):
-
-    def get_mocked_append(original, results):
-        def _f(self, row):
-            results[self.title].append(row)
-            return original(self, row)
-        return _f
-
-    def get_mocked_create_sheet(original, results):
-        def _f(self, title=None, index=None):
-            results[title] = []
-            return original(self, title, index)
-        return _f
-
-
-    results = {}
-    from openpyxl import Workbook
-    original_create_sheet = Workbook.create_sheet
-    from openpyxl.worksheet.worksheet import Worksheet
-    original_append = Worksheet.append
-    Worksheet.append = get_mocked_append(original_append, results)
-    Workbook.create_sheet = get_mocked_create_sheet(original_create_sheet, results)
-    yield results
-    Workbook.create_sheet = original_create_sheet
-    Worksheet.append = original_append
+def mocked_workbook():
+    providers.xlwt_provider._results = {}
+    yield providers.xlwt_provider._results
+    providers.xlwt_provider._results = {}
