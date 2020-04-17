@@ -1,6 +1,7 @@
 # see https://github.com/pytest-dev/pytest-django/blob/master/pytest_django/fixtures.py
 import random
 
+import mock
 import pytest
 from django.db.models import Q
 
@@ -11,8 +12,8 @@ from djaxei import Exporter
 @pytest.mark.django_db
 class TestExport(object):
 
-    def test_exporter(self, mocked_workbook, records4):
-        from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3
+    def test_exporter(self, recordset):
+        from demoproject.app1.models import DemoModel1
         root = random.choice(DemoModel1.objects.all())
         data = {
             'app1.demomodel1': ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic', 'date', 'nullable', 'choice'],
@@ -22,15 +23,10 @@ class TestExport(object):
         }
 
         workbook_filename = Exporter().xls_export(data, root=root)
-        print(1)
-        assert mocked_workbook['demomodel2'] == [data['app1.demomodel2'], ] + \
-               [list(x) for x in root.demomodel2_set.values_list(*data['app1.demomodel2'])]
-        assert mocked_workbook['demomodel3'] == [data['app1.DemoModel3'], ] + \
-               [list(x) for x in root.demomodel3_set.values_list(*data['app1.DemoModel3'])]
-        q = DemoModel4.objects.filter(Q(fk2__fk=root) | Q(fk3__fk=root))
-        check = [data['app1.DemoModel4'], ] + [list(x) for x in q.values_list(*data['app1.DemoModel4'])]
-        mocked_workbook['demomodel4'].sort()
-        check.sort()
-        assert mocked_workbook['demomodel4'] == check
-        from pprint import pprint
-        pprint(mocked_workbook)
+
+        from openpyxl import load_workbook
+        wb = load_workbook(workbook_filename)
+        assert set(wb.sheetnames) == set(['demomodel1', 'demomodel2', 'demomodel3', 'demomodel4',])
+        assert [[cell.value for cell in row] for row in wb['demomodel2'].rows] == \
+               [data['app1.demomodel2'], ] + [list(x) for x in root.demomodel2_set.values_list(*data['app1.demomodel2'])]
+

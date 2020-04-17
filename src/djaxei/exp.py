@@ -1,11 +1,12 @@
 import os
+from collections import OrderedDict
 from tempfile import NamedTemporaryFile
 
 from django.contrib.admin.utils import NestedObjects
 from django.db import router
 from django.utils.translation import ugettext_lazy as _
 
-from djaxei.providers.xlwt_provider import get_workbook_impl
+from djaxei.providers import get_workbook_impl
 
 
 class Exporter:
@@ -20,9 +21,7 @@ class Exporter:
         workbook = None
         workbookfile = None
         try:
-            workbookfile = self.dest or NamedTemporaryFile(dir=self.tmpdir, suffix=".xlsx", delete=False)
-
-            sheets = {}
+            sheets = OrderedDict()
 
             lmodels = {}
             for k, v in _models.items():
@@ -45,8 +44,9 @@ class Exporter:
 
             collector.nested(callback)
 
-            Workbook = get_workbook_impl()()
-            Workbook.write_data(workbookfile, sheets)
+            Workbook = get_workbook_impl()
+            workbookfile = self.dest or NamedTemporaryFile(dir=self.tmpdir, suffix=Workbook._preferred_suffix, delete=False)
+            Workbook(workbookfile).write_data(sheets)
 
             return workbookfile.name
 

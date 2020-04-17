@@ -43,3 +43,13 @@ class DemoModel4(models.Model):
                             on_delete=models.CASCADE)
     char = models.CharField(max_length=255, blank=True, null=True)
     integer = models.IntegerField(blank=True, null=True)
+
+
+class DemoModel5(models.Model):
+    fk2 = models.ForeignKey(DemoModel2,
+                           on_delete=models.CASCADE)
+    fk3 = models.ForeignKey(DemoModel3,
+                            blank=True, null=True,
+                            on_delete=models.CASCADE)
+    char = models.CharField(max_length=255, blank=True, null=True)
+    integer = models.IntegerField(blank=True, null=True)

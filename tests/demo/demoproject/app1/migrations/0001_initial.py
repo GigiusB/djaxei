@@ -58,4 +58,14 @@ class Migration(migrations.Migration):
                 ('fk3', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='app1.DemoModel3')),
             ],
         ),
+        migrations.CreateModel(
+            name='DemoModel5',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('char', models.CharField(blank=True, max_length=255, null=True)),
+                ('integer', models.IntegerField(blank=True, null=True)),
+                ('fk2', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app1.DemoModel2')),
+                ('fk3', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='app1.DemoModel3')),
+            ],
+        ),
     ]

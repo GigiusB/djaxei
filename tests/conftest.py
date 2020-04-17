@@ -10,7 +10,6 @@ import pytest
 from factory.fuzzy import FuzzyInteger, FuzzyDate, FuzzyChoice, FuzzyText
 
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
-from djaxei import providers
 
 
 @pytest.fixture(scope='session')
@@ -65,6 +64,14 @@ class DemoModel4Factory(factory.DjangoModelFactory):
         model = DemoModel4
 
 
+class DemoModel5Factory(factory.DjangoModelFactory):
+    integer = FuzzyInteger(1000)
+    char = FuzzyText(length=10, prefix='dm5_')
+
+    class Meta:
+        model = DemoModel4
+
+
 @pytest.fixture
 def demomodel1(db):
     ret = DemoModel1Factory.create()
@@ -102,13 +109,21 @@ def records4(records2, records3):
     ret = []
     for n in range(15):
         master1 = random.choice(records2)
-        master2 = random.choice(records3) if n % 3 !=0 else None
+        master2 = random.choice(records3) if n % 3 != 0 else None
         ret.append(DemoModel4Factory.create(fk2=master1, fk3=master2))
     return ret
 
 
 @pytest.fixture
-def mocked_workbook():
-    providers.xlwt_provider._results = {}
-    yield providers.xlwt_provider._results
-    providers.xlwt_provider._results = {}
+def records5(records2, records3):
+    ret = []
+    for n in range(15):
+        master1 = random.choice(records2)
+        master2 = random.choice(records3) if n % 3 != 0 else None
+        ret.append(DemoModel5Factory.create(fk2=master1, fk3=master2))
+    return ret
+
+
+@pytest.fixture
+def recordset(records4, records5):
+    return records4 + records5
