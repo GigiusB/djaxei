@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djaxei"
-version = "0.6.0"
+version = "0.7.0"
 description = "A django admin extension for importing exporting records from/to xls/ods"
 authors = ["Giovanni Bronzini <g.bronzini@gmail.com>"]
 license = "MIT"
@@ -13,26 +13,35 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python = ">=3.6.1,<4"
 django = ">=1.11,<4"
-openpyxl = { version = "<3", optional = true }
-xlwt = {version = "^1.2.0", optional = true}
-xlsxwriter = {version = "^1.2.8", optional = true}
+openpyxl = { version = "<4", optional = true }
+xlwt = {version = ">=1.2.0", optional = true}
+xlsxwriter = {version = ">=1.2.8", optional = true}
 
 [tool.poetry.dev-dependencies]
-pytest = "<=5.0"
-tox = "^3.14.6"
-pytest-django = "^3.9.0"
-django-webtest = "^1.9.7"
-
-#pre-commit = "^2.1.1"
+pytest = "^6.2.5"
+tox = "^3.24.4"
+pytest-django = "^4.5.2"
+factory-boy = "^3.2.1"
 pytest-pythonpath = "^0.7.3"
-flake8 = "^3.7.9"
-isort = "^4.3.21"
-factory_boy = "^2.12.0"
-mock = "<3"
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+django-webtest = "^1.9.8"
+pytest-env = "^0.6.2"
+pytest-coverage = "^0.0"
+pytest-echo = "^1.7.1"
 
+[tool.poetry.extras]
+openpyxl = ["openpyxl"]
+xlsxwriter = ["xlsxwriter"]
+xlwt = ["xlwt"]
 
+#requires = ["poetry>=1.1"]
+#build-backend = "poetry.masonry.api"
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = [
+    "setuptools >= 35.0.2",
+    "setuptools_scm >= 2.0.0, <3"
+]
+build-backend = "setuptools.build_meta"

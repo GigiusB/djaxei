@@ -1,7 +1,6 @@
 # see https://github.com/pytest-dev/pytest-django/blob/master/pytest_django/fixtures.py
 import random
 
-import mock
 import pytest
 from django.db.models import Q
 

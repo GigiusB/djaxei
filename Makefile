@@ -85,3 +85,12 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	poetry install
 
+bump:   ## Bumps version
+	@while :; do \
+		read -r -p "bumpversion [major/minor/patch]: " PART; \
+		case "$$PART" in \
+			major|minor|patch) break ;; \
+  		esac \
+	done ; \
+	bumpversion --no-commit --allow-dirty $$PART
+	@grep "^version = " pyproject.toml

@@ -7,6 +7,8 @@
 !.flake8
 !.isort.cfg
 !.pre-commit-config.yaml
+!tests/.coveragerc
+!.python-version
 
 __pycache__
 dist

@@ -30,7 +30,7 @@ def pytest_configure():
 
 
 CHOICES_IDS = [x[0] for x in DemoModel1.CHOICES]
-class DemoModel1Factory(factory.DjangoModelFactory):
+class DemoModel1Factory(factory.django.DjangoModelFactory):
     char = FuzzyText(length=10, prefix='dm1_')
     integer = FuzzyInteger(1000)
     date = FuzzyDate(datetime.date(2008, 1, 1))
@@ -40,7 +40,7 @@ class DemoModel1Factory(factory.DjangoModelFactory):
         model = DemoModel1
 
 
-class DemoModel2Factory(factory.DjangoModelFactory):
+class DemoModel2Factory(factory.django.DjangoModelFactory):
     integer = FuzzyInteger(1000)
     char = FuzzyText(length=10, prefix='dm2_')
 
@@ -48,7 +48,7 @@ class DemoModel2Factory(factory.DjangoModelFactory):
         model = DemoModel2
 
 
-class DemoModel3Factory(factory.DjangoModelFactory):
+class DemoModel3Factory(factory.django.DjangoModelFactory):
     integer = FuzzyInteger(1000)
     char = FuzzyText(length=10, prefix='dm3_')
 
@@ -56,7 +56,7 @@ class DemoModel3Factory(factory.DjangoModelFactory):
         model = DemoModel3
 
 
-class DemoModel4Factory(factory.DjangoModelFactory):
+class DemoModel4Factory(factory.django.DjangoModelFactory):
     integer = FuzzyInteger(1000)
     char = FuzzyText(length=10, prefix='dm4_')
 
@@ -64,7 +64,7 @@ class DemoModel4Factory(factory.DjangoModelFactory):
         model = DemoModel4
 
 
-class DemoModel5Factory(factory.DjangoModelFactory):
+class DemoModel5Factory(factory.django.DjangoModelFactory):
     integer = FuzzyInteger(1000)
     char = FuzzyText(length=10, prefix='dm5_')
 
