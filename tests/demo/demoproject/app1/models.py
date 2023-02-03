@@ -16,8 +16,11 @@ class DemoModel1(models.Model):
     logic = models.BooleanField(default=False)
     null_logic = models.NullBooleanField(default=None)
     date = models.DateField()
+    timestamp = models.DateTimeField()
     nullable = models.CharField(max_length=255, null=True, default=None)
     choice = models.IntegerField(choices=CHOICES)
+    j = models.JSONField(default={})
+
 
 
 class DemoModel2(models.Model):

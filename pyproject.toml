@@ -13,32 +13,49 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.6.1,<4"
+python = ">=3.8.5,<4"
 django = ">=1.11,<4"
-openpyxl = { version = "<4", optional = true }
-xlwt = {version = ">=1.2.0", optional = true}
-xlsxwriter = {version = ">=1.2.8", optional = true}
+#openpyxl = { version = "<4", optional = true }
+#xlwt = {version = ">=1.2.0", optional = true}
+#xlsxwriter = {version = ">=1.2.8", optional = true}
+openpyxl = ">=3.0.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-tox = "^3.24.4"
-pytest-django = "^4.5.2"
-factory-boy = "^3.2.1"
-pytest-pythonpath = "^0.7.3"
-flake8 = "^4.0.1"
-isort = "^5.10.1"
-django-webtest = "^1.9.8"
-pytest-env = "^0.6.2"
-pytest-coverage = "^0.0"
-pytest-echo = "^1.7.1"
+#pytest = "^6.2.5"
+#tox = "^3.24.4"
+#pytest-django = "^4.5.2"
+#factory-boy = "^3.2.1"
+#pytest-pythonpath = "^0.7.3"
+#flake8 = "^4.0.1"
+#isort = "^5.10.1"
+#django-webtest = "^1.9.8"
+#pytest-env = "^0.6.2"
+#pytest-coverage = "^0.0"
+#pytest-echo = "^1.7.1"
 
-[tool.poetry.extras]
-openpyxl = ["openpyxl"]
-xlsxwriter = ["xlsxwriter"]
-xlwt = ["xlwt"]
+#[tool.poetry.extras]
+#openpyxl = ["openpyxl"]
+#xlsxwriter = ["xlsxwriter"]
+#xlwt = ["xlwt"]
 
 #requires = ["poetry>=1.1"]
 #build-backend = "poetry.masonry.api"
+
+#[tool.poetry.group.dev.dependencies]
+#openpyxl = "^3.1.0"
+#xlsxwriter = "^3.0.7"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+pytest-django = "^4.5.2"
+flake8 = "^6.0.0"
+isort = "^5.12.0"
+bumpversion = "^0.6.0"
+factory-boy = "^3.2.1"
+pytest-env = "^0.8.1"
+pytest-coverage = "^0.0"
+pytest-echo = "^1.7.1"
+
 [build-system]
 requires = [
     "setuptools >= 35.0.2",

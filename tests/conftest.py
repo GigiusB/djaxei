@@ -7,7 +7,8 @@ import factory
 import logging
 
 import pytest
-from factory.fuzzy import FuzzyInteger, FuzzyDate, FuzzyChoice, FuzzyText
+from dateutil.tz import UTC
+from factory.fuzzy import FuzzyInteger, FuzzyDate, FuzzyChoice, FuzzyText, FuzzyDateTime
 
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
 
@@ -34,7 +35,14 @@ class DemoModel1Factory(factory.django.DjangoModelFactory):
     char = FuzzyText(length=10, prefix='dm1_')
     integer = FuzzyInteger(1000)
     date = FuzzyDate(datetime.date(2008, 1, 1))
+    timestamp = FuzzyDateTime(start_dt=datetime.datetime(2008, 1, 1, 13, 44, 1, tzinfo=UTC))
     choice = FuzzyChoice(CHOICES_IDS)
+    j = {
+        'alfa': 1,
+        'beta': {
+            'gamma': 'delta'
+        }
+    }
 
     class Meta:
         model = DemoModel1
