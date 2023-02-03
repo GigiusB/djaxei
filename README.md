@@ -18,6 +18,10 @@ A Python library project using:
 
 - Could help if use [direnv](https://direnv.net/) in dev environment
 
+# Contributing
+
+See [demo](tests%2Fdemo) in tests folder
+
 * TODO
 
 # Dev setup
