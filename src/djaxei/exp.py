@@ -4,11 +4,62 @@ from collections.abc import Iterable
 from tempfile import NamedTemporaryFile
 
 from django.contrib.admin.utils import NestedObjects
-from django.db import router
+from django.db import router, models
 from django.db.models.query import QuerySet
 from openpyxl import Workbook
 
-from djaxei.providers import get_workbook_impl
+
+class AbstractMoDem:
+
+    def __init__(self, model, rules) -> None:
+        """The base exporter class.
+
+        :param model:
+        :param rules:
+        """
+        self.rules = rules
+        if isinstance(model, str):  # we assume 'app.modelname' format
+            self.model = model.strip().lower()
+        elif isinstance(model, models.Model):
+            self.model = model._meta.label_lower
+
+    def modulate(self, obj: models.Model, context):
+        pass
+
+    def demodulate(self, obj, context):
+        pass
+
+
+class SimpleMoDem:
+    """A simple MoDem class accepting e list of either directly fieldnames or (fieldname, FieldMoDem).
+
+    :param model:
+    :param rules:
+    """
+    def modulate(self, obj: models.Model, context):
+        row = []
+        for x in self.rules:
+            if isinstance(x, str):
+                row.append(getattr(obj, x))
+            else:  # we consider FieldMoDem
+                row.append(x[1]().modulate(getattr(obj, x[0])))
+        return row
+
+
+
+class ExcelMoDem(AbstractMoDem):
+
+    def modulate(self, obj: models.Model, context):
+        fields = obj._meta.label_lower
+        row = []
+        for x in fields:
+            if isinstance(x, str):
+                row.append(getattr(obj, x))
+            else:
+                row.append(x[1](getattr(obj, x[0])))
+        return row
+
+
 
 
 class Exporter:

@@ -45,6 +45,9 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
 
     fx_dt = lambda dt: dt.replace(tzinfo=None)
     data = {
+        MyModelExporter(model=m1, rules=['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
+                            'date', 'nullable', 'choice',
+                            ('timestamp', fx_dt), ('j', json.dumps)]),
         m1: ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
                             'date', 'nullable', 'choice',
                             ('timestamp', fx_dt), ('j', json.dumps)],
