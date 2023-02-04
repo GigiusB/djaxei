@@ -1,5 +1,6 @@
 import os
 from collections import OrderedDict
+from collections.abc import Iterable
 from tempfile import NamedTemporaryFile
 
 from django.contrib.admin.utils import NestedObjects
@@ -20,10 +21,19 @@ class Exporter:
         if isinstance(root, QuerySet):
             self.roots = root
             self.using = router.db_for_write(root.first()._meta.model)
+        elif isinstance(root, Iterable):
+            self.roots = root
+            self.using = router.db_for_write(list(root)[0]._meta.model)
         else:
             self.roots = [root]
             self.using = router.db_for_write(root._meta.model)
-        self.rules = rules
+        self.rules = {}
+        for model_ref, field_refs in rules.items():
+            if isinstance(model_ref, str):
+                model_ref = model_ref.lower()
+            else:
+                model_ref = model_ref._meta.label_lower
+            self.rules[model_ref] = field_refs
 
     def xls_export(self, target):
         lmodels = {}
@@ -32,8 +42,6 @@ class Exporter:
         sheets = OrderedDict()
 
         for model_ref, field_refs in self.rules.items():
-            model_ref = model_ref.lower()
-
             lmodels[model_ref] = field_refs
 
             header = [x if isinstance(x, str) else x[0] for x in field_refs]
