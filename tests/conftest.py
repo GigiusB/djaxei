@@ -89,7 +89,7 @@ def demomodel1(db):
 @pytest.fixture
 def records1(db):
     ret = []
-    for n in range(3):
+    for n in range(5):
         ret.append(DemoModel1Factory.create())
     return ret
 
