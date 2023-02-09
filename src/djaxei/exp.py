@@ -63,7 +63,7 @@ class ExcelMoDem(AbstractMoDem):
 
 
 class Exporter:
-    def __init__(self, root, rules: dict):
+    def __init__(self, root, modems: list):
         """Create an exporter.
 
         :param root: Can be a Django object, or a queryset
@@ -78,13 +78,15 @@ class Exporter:
         else:
             self.roots = [root]
             self.using = router.db_for_write(root._meta.model)
-        self.rules = {}
-        for model_ref, field_refs in rules.items():
-            if isinstance(model_ref, str):
-                model_ref = model_ref.lower()
-            else:
-                model_ref = model_ref._meta.label_lower
-            self.rules[model_ref] = field_refs
+        self.modems = modems
+
+        # {}
+        # for model_ref, field_refs in rules.items():
+        #     if isinstance(model_ref, str):
+        #         model_ref = model_ref.lower()
+        #     else:
+        #         model_ref = model_ref._meta.label_lower
+        #     self.mode[model_ref] = field_refs
 
     def xls_export(self, target):
         lmodels = {}

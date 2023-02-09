@@ -11,6 +11,7 @@ from django.db.models import Q
 from openpyxl.reader.excel import load_workbook
 
 from djaxei import Exporter
+from djaxei.modems.model import FieldListModelMoDem
 
 
 def root_generator(key):
@@ -21,6 +22,11 @@ def root_generator(key):
         3: random.sample(list(qs), 2)
     }[key]
 
+
+class ExampleModelExporter(FieldListModelMoDem):
+
+    def __init__(self, model, fields: list, *args, **kwargs):
+        super().__init__(model, fields, *args, **kwargs)
 
 
 @pytest.mark.parametrize(
@@ -44,19 +50,34 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
     roots = root_generator(root_fx_key)
 
     fx_dt = lambda dt: dt.replace(tzinfo=None)
-    data = {
-        MyModelExporter(model=m1, rules=['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
+    modems = {
+        ExampleModelExporter(
+            model=m1,
+            fields=['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
                             'date', 'nullable', 'choice',
-                            ('timestamp', fx_dt), ('j', json.dumps)]),
-        m1: ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
+                            ('timestamp', fx_dt), ('j', json.dumps)]
+        ),
+        ExampleModelExporter(
+            m1,
+            ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
                             'date', 'nullable', 'choice',
-                            ('timestamp', fx_dt), ('j', json.dumps)],
-        m2: ['id', 'fk_id', 'integer'],
-        m3: ['id', 'fk_id', 'char', 'integer'],
-        m4: ['id', 'fk3_id', 'char', 'fk2_id', 'integer'],
+                            ('timestamp', fx_dt), ('j', json.dumps)]
+        ),
+        ExampleModelExporter(
+            m2,
+            ['id', 'fk_id', 'integer']
+        ),
+        ExampleModelExporter(
+            m3,
+            ['id', 'fk_id', 'char', 'integer']
+        ),
+        ExampleModelExporter(
+            m4,
+            ['id', 'fk3_id', 'char', 'fk2_id', 'integer']
+        ),
     }
 
-    exporter = Exporter(root=roots, rules=data)
+    exporter = Exporter(root=roots, modems=modems)
     with NamedTemporaryFile(suffix='.xlsx') as fo:
         exporter.xls_export(fo)
 
