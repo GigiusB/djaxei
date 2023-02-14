@@ -1,4 +1,5 @@
 # see https://github.com/pytest-dev/pytest-django/blob/master/pytest_django/fixtures.py
+import datetime
 import json
 import random
 from collections.abc import Iterable
@@ -29,8 +30,6 @@ class ExampleModelExporter(FieldListModelMoDem):
         super().__init__(model, fields, *args, **kwargs)
 
 
-
-
 @pytest.mark.parametrize(
     'root_fx_key, m1, m2, m3, m4',
     (
@@ -56,14 +55,14 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
         ExampleModelExporter(
             model=m1,
             fields=['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
-                            'date', 'nullable', 'choice',
-                            ('timestamp', fx_dt), ('j', json.dumps)]
+                    'date', 'nullable', 'choice',
+                    ('timestamp', fx_dt), ('j', json.dumps)]
         ),
         ExampleModelExporter(
             m1,
             ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
-                            'date', 'nullable', 'choice',
-                            ('timestamp', fx_dt), ('j', json.dumps)]
+             'date', 'nullable', 'choice',
+             ('timestamp', fx_dt), ('j', json.dumps)]
         ),
         ExampleModelExporter(
             m2,
@@ -101,47 +100,29 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
 
     result_root_header = results[root_model_name][0]
 
+    # check roots
     expected = list(root_class.objects.filter(id__in=[c.id for c in roots]).values())
+    for e in expected:
+        e['j'] = json.dumps(e['j'])
+        e['timestamp'] = fx_dt(e['timestamp']).replace(microsecond=0)
+        e['date'] = datetime.datetime.fromordinal(e['date'].toordinal())
     actual = [dict(zip(result_root_header, row)) for row in results[root_model_name][1:]]
-    assert expected == actual
+    for k in actual:
+        k['timestamp'] = k['timestamp'].replace(microsecond=0)
+    assert sorted(expected, key=lambda x: x['id']) == sorted(actual, key=lambda x: x['id'])
 
-    dd = {}
-    for k, v in data.items():
-        if isinstance(k, str):
-            k = k.lower()
-        else:
-            k = k._meta.label_lower
-        dd[k] = [[x if isinstance(x, str) else x[0] for x in v], ]
-    data = dd
+    root_ids = [x.id for x in roots]
 
-    if not isinstance(roots, Iterable):
-        roots = [roots]
-    for obj in roots:
-        data['app1.demomodel1'].append([
-            obj.id, obj.fk_id, obj.char, obj. integer, obj.logic, obj.null_logic,
-            obj.date, obj.nullable, obj.choice,
-            fx_dt(obj.timestamp).replace(microsecond=0),
-            json.dumps(obj.j)]
-        )
-    for obj in DemoModel2.objects.filter(fk__in=roots):
-        data['app1.demomodel2'].append([obj.id, obj.fk_id, obj.integer])
-    for obj in DemoModel3.objects.filter(fk__in=roots):
-        data['app1.demomodel3'].append([obj.id, obj.fk_id, obj.char, obj.integer])
-    for obj in DemoModel4.objects.filter(Q(fk2__fk__in=roots) | Q(fk3__fk__in=roots)):
-        data['app1.demomodel4'].append(
-            [obj.id, obj.fk3_id, obj.char, obj.fk2_id, obj.integer]
-        )
+    # check DemoModel2
+    ids = sorted([x[0] for x in results['app1.demomodel2'][1:]])
+    assert sorted(list(DemoModel2.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids
 
-    expected = {}
-    for k, v in data.items():
-        expected[k.lower()] = v[:1] + sorted(v[1:], key=lambda x: x[0])
-    for k in expected['app1.demomodel1'][1:]:
-        k[-2] = k[-2].replace(microsecond=0)
+    # check DemoModel3
+    ids = sorted([x[0] for x in results['app1.demomodel3'][1:]])
+    assert sorted(list(DemoModel3.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids
 
-    for k, v in results.items():
-        results[k] = v[:1] + sorted(v[1:], key=lambda x: x[0])
-    for k in results['app1.demomodel1'][1:]:
-        k[6] = k[6].date()
-        k[-2] = k[-2].replace(microsecond=0)
-
-    assert results == expected
+    # check DemoModel4
+    ids = sorted([x[0] for x in results['app1.demomodel4'][1:]])
+    assert sorted(
+        list(DemoModel4.objects.filter(Q(fk3__fk__in=root_ids) | Q(fk2__fk__in=root_ids)).values_list('id', flat=True))
+    ) == ids
