@@ -8,7 +8,7 @@ class AbstractModelMoDem:
         if hasattr(model, '_meta'):
             self.model_label = model._meta.label_lower
         else:
-            self.model_label = model
+            self.model_label = model.lower()
         self._extra_args = {
             'args': args,
             'kwargs': kwargs
@@ -20,7 +20,6 @@ class AbstractModelMoDem:
     def demodulate(self, obj, context):
         pass
 
-
 class FieldListModelMoDem(AbstractModelMoDem):
     """A ModelModem requiring a list of fields to serialize.
 
@@ -31,3 +30,16 @@ class FieldListModelMoDem(AbstractModelMoDem):
     def __init__(self, model, fields: list, *args, **kwargs):
         self.field_list = fields
         super().__init__(model, *args, **kwargs)
+
+    def get_header(self):
+        return [fname if isinstance(fname, str) else fname[0] for fname in self.field_list]
+
+    def modulate(self, obj):
+        row = []
+        for field in self.field_list:
+            if isinstance(field, str):
+                row.append(getattr(obj, field))
+            else:
+                row.append(field[1](getattr(obj, field[0])))
+        # sheets[obj._meta.label_lower].append(row)
+        return row

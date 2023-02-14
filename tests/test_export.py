@@ -7,7 +7,7 @@ from tempfile import NamedTemporaryFile
 import pytest
 from demoproject.app1.models import (DemoModel1, DemoModel2,
                                      DemoModel3, DemoModel4,)
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from openpyxl.reader.excel import load_workbook
 
 from djaxei import Exporter
@@ -27,6 +27,8 @@ class ExampleModelExporter(FieldListModelMoDem):
 
     def __init__(self, model, fields: list, *args, **kwargs):
         super().__init__(model, fields, *args, **kwargs)
+
+
 
 
 @pytest.mark.parametrize(
@@ -89,6 +91,19 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
             results[sheet.title] = []
             for row in sheet.rows:
                 results[sheet.title].append([c.value for c in row])
+
+    if isinstance(roots, QuerySet):
+        roots = list(roots.all())
+    elif not isinstance(roots, Iterable):
+        roots = [roots]
+    root_class = roots[0].__class__
+    root_model_name = root_class._meta.label_lower
+
+    result_root_header = results[root_model_name][0]
+
+    expected = list(root_class.objects.filter(id__in=[c.id for c in roots]).values())
+    actual = [dict(zip(result_root_header, row)) for row in results[root_model_name][1:]]
+    assert expected == actual
 
     dd = {}
     for k, v in data.items():

@@ -88,38 +88,51 @@ class Exporter:
         #         model_ref = model_ref._meta.label_lower
         #     self.mode[model_ref] = field_refs
 
+    def get_modem_for_object(self, obj):
+        ret = None
+        for modem in self.modems:
+            if modem.model_label == obj._meta.label_lower:
+                ret = modem
+                break
+        return ret
+
+
     def xls_export(self, target):
-        lmodels = {}
+        # lmodels = {}
 
         wb = Workbook(write_only=True)
         sheets = OrderedDict()
 
-        for model_ref, field_refs in self.rules.items():
-            lmodels[model_ref] = field_refs
-
-            header = [x if isinstance(x, str) else x[0] for x in field_refs]
-            sheets[model_ref] = [header, ]
-            wb.create_sheet(model_ref)
+        for modem in self.modems:
+            header = modem.get_header()
+            sheets[modem.model_label] = [header, ]
+            wb.create_sheet(modem.model_label)
 
         collector = NestedObjects(using=self.using)
         collector.collect(self.roots)
 
-        def callback(obj):
-            fields = lmodels.get(obj._meta.label_lower, None)
-            if fields:
-                row = []
-                for x in fields:
-                    if isinstance(x, str):
-                        row.append(getattr(obj, x))
-                    else:
-                        row.append(x[1](getattr(obj, x[0])))
-                sheets[obj._meta.label_lower].append(row)
+        def callback_generator(exporter):
+            exporter = exporter
+            def callback(obj):
+                modem = exporter.get_modem_for_object(obj)
+                sheets[obj._meta.label_lower].append(modem.modulate(obj))
 
-        collector.nested(callback)
+                # fields = lmodels.get(obj._meta.label_lower, None)
+                # if fields:
+                #     row = []
+                #     for x in fields:
+                #         if isinstance(x, str):
+                #             row.append(getattr(obj, x))
+                #         else:
+                #             row.append(x[1](getattr(obj, x[0])))
+                #     sheets[obj._meta.label_lower].append(row)
+            return callback
 
-        for k, rows in sheets.items():
+        collector.nested(callback_generator(self))
+
+        for sheet_name, rows in sheets.items():
             for row in rows:
-                wb[k].append(row)
+                wb[sheet_name].append(row)
 
         wb.save(target)
         #
