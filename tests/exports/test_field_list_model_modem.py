@@ -72,3 +72,12 @@ def test_field_lists_modulate(demomodel1):
         fx_dt(demomodel1.timestamp),
         json.dumps(demomodel1.j)
     ]
+
+
+def test_field_list_mandatory(demomodel1):
+    exp1 = FieldListModelMoDem(
+        model=DemoModel1,
+        fields=[]
+    )
+    with pytest.raises(RuntimeError, match='Field list is mandatory for modulate'):
+        exp1.modulate(demomodel1)

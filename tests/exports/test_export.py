@@ -24,11 +24,6 @@ def root_generator(key):
     }[key]
 
 
-class ExampleModelExporter(FieldListModelMoDem):
-
-    def __init__(self, model, fields: list, *args, **kwargs):
-        super().__init__(model, fields, *args, **kwargs)
-
 
 @pytest.mark.parametrize(
     'root_fx_key, m1, m2, m3, m4',
@@ -52,27 +47,21 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
 
     fx_dt = lambda dt: dt.replace(tzinfo=None)
     modems = {
-        ExampleModelExporter(
+        FieldListModelMoDem(
             model=m1,
             fields=['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
                     'date', 'nullable', 'choice',
                     ('timestamp', fx_dt), ('j', json.dumps)]
         ),
-        ExampleModelExporter(
-            m1,
-            ['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
-             'date', 'nullable', 'choice',
-             ('timestamp', fx_dt), ('j', json.dumps)]
-        ),
-        ExampleModelExporter(
+        FieldListModelMoDem(
             m2,
             ['id', 'fk_id', 'integer']
         ),
-        ExampleModelExporter(
+        FieldListModelMoDem(
             m3,
             ['id', 'fk_id', 'char', 'integer']
         ),
-        ExampleModelExporter(
+        FieldListModelMoDem(
             m4,
             ['id', 'fk3_id', 'char', 'fk2_id', 'integer']
         ),
@@ -84,8 +73,11 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
 
         # Checks starts here
 
+        # Read generated workbook
         results = {}
         wb = load_workbook(filename=fo.name, read_only=True)
+        assert sorted(wb.sheetnames) == ['app1.demomodel1', 'app1.demomodel2', 'app1.demomodel3', 'app1.demomodel4']
+
         for sheet in wb.worksheets:
             results[sheet.title] = []
             for row in sheet.rows:

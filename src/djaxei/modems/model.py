@@ -27,14 +27,21 @@ class FieldListModelMoDem(AbstractModelMoDem):
     - the str name of the field
     - a function that will be passed the obj and the field name
     """
-    def __init__(self, model, fields: list, *args, **kwargs):
-        self.field_list = fields
+    def __init__(self, model, fields: list = None, loader=None, *args, **kwargs):
         super().__init__(model, *args, **kwargs)
+        self.field_list = fields
+        self.loader = loader
 
     def get_header(self):
         return [fname if isinstance(fname, str) else fname[0] for fname in self.field_list]
 
     def modulate(self, obj):
+        """Serialise obj using the provided field_list in Modem init.
+
+        Raise exception if no field_list provided.
+        """
+        if not self.field_list:
+            raise RuntimeError('Field list is mandatory for modulate')
         row = []
         for field in self.field_list:
             if isinstance(field, str):
