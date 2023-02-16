@@ -19,8 +19,18 @@ class Importer:
         }
 
         for modem in self.modems:
-            loader = modem.loader(remappings, modem.model_label, wb.worksheets[wb.sheetnames.index(modem.model_label)])
-            loader()
+            modem.get_importer(remappings, wb).run()
+
+            # args = {}
+            #
+            # for field in modem.field_list:
+            #     if field == modem.pk:
+            #         pk_remapping =  pass
+            #     else:
+            #         pass
+            #
+            # loader = modem.loader(remappings, modem.model_label, wb.worksheets[wb.sheetnames.index(modem.model_label)])
+            # loader()
         print(wb)
 
 

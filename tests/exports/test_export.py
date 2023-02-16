@@ -12,6 +12,7 @@ from django.db.models import Q, QuerySet
 from openpyxl.reader.excel import load_workbook
 
 from djaxei import Exporter
+from djaxei.modems.field import DatetimeNonAwareModem, JsonToStringModem
 from djaxei.modems.model import FieldListModelMoDem
 
 
@@ -51,7 +52,7 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
             model=m1,
             fields=['id', 'fk_id', 'char', 'integer', 'logic', 'null_logic',
                     'date', 'nullable', 'choice',
-                    ('timestamp', fx_dt), ('j', json.dumps)]
+                    DatetimeNonAwareModem('timestamp'), JsonToStringModem('j')]
         ),
         FieldListModelMoDem(
             m2,
@@ -106,15 +107,15 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
     root_ids = [x.id for x in roots]
 
     # check DemoModel2
-    ids = sorted([x[0] for x in results['app1.demomodel2'][1:]])
-    assert sorted(list(DemoModel2.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids
+    ids2 = sorted([x[0] for x in results['app1.demomodel2'][1:]])
+    assert sorted(list(DemoModel2.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids2
 
     # check DemoModel3
-    ids = sorted([x[0] for x in results['app1.demomodel3'][1:]])
-    assert sorted(list(DemoModel3.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids
+    ids3 = sorted([x[0] for x in results['app1.demomodel3'][1:]])
+    assert sorted(list(DemoModel3.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids3
 
     # check DemoModel4
-    ids = sorted([x[0] for x in results['app1.demomodel4'][1:]])
+    ids4 = sorted([x[0] for x in results['app1.demomodel4'][1:]])
     assert sorted(
         list(DemoModel4.objects.filter(Q(fk3__fk__in=root_ids) | Q(fk2__fk__in=root_ids)).values_list('id', flat=True))
-    ) == ids
+    ) == ids4

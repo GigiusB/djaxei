@@ -13,6 +13,7 @@ import pytest
 from djaxei import Importer
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
 from djaxei.imp import LoaderFx
+from djaxei.modems.field import DatetimeNonAwareModem, JsonToStringModem, RemapperFieldModem
 from djaxei.modems.model import FieldListModelMoDem
 
 
@@ -77,7 +78,14 @@ def modifier_m1(row, *args):
     row['j'] = json.loads(row['j'])
 
 def modifier_m2(row, mappings):
-    row['fk_id'] = mappings['app1.demomodel1'][row['fk_id']]
+    row['fk_id'] = mappings['app1.demomodel2'][row['fk_id']]
+
+def modifier_m3(row, mappings):
+    row['fk_id'] = mappings['app1.demomodel3'][row['fk_id']]
+
+def modifier_m4(row, mappings):
+    row['fk_id'] = mappings['app1.demomodel4'][row['fk_id']]
+
 
 
 
@@ -111,19 +119,21 @@ class TestImport(object):
         modems = [
             FieldListModelMoDem(
                 model='app1.demomodel1',
-                loader=LoaderFx(model_name='app1.demomodel1', modifier=modifier_m1)
+                fields=['id', RemapperFieldModem('fk_id', 'app1.demomodel1'), 'char', 'integer', 'logic', 'null_logic',
+                        'date', 'nullable', 'choice',
+                        DatetimeNonAwareModem('timestamp'), JsonToStringModem('j')]
             ),
             FieldListModelMoDem(
                 model='app1.demomodel2',
-                loader=LoaderFx(model_name='app1.demomodel2', modifier=modifier_m2)
+                fields=['id', RemapperFieldModem('fk_id', 'app1.demomodel1'), 'integer']
             ),
             FieldListModelMoDem(
                 model='app1.demomodel3',
-                loader=LoaderFx(model_name='app1.demomodel3', modifier=modifier_m2)
+                fields=['id', RemapperFieldModem('fk_id', 'app1.demomodel1'), 'char', 'integer']
             ),
             FieldListModelMoDem(
                 model='app1.demomodel4',
-                loader=LoaderFx(model_name='app1.demomodel4', modifier=modifier_m2)
+                fields=['id', RemapperFieldModem('fk3_id', 'app1.demomodel3'), 'char', RemapperFieldModem('fk2_id', 'app1.demomodel2'), 'integer']
             ),
             # FieldListModelMoDem(
             #     'app1.demomodel2',
