@@ -4,15 +4,10 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from pathlib import Path
 
-import datetime
-import os
-from collections import OrderedDict
-
 import pytest
 
 from djaxei import Importer
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
-from djaxei.imp import LoaderFx
 from djaxei.modems.field import DatetimeNonAwareModem, JsonToStringModem, RemapperFieldModem
 from djaxei.modems.model import FieldListModelMoDem
 
