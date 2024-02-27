@@ -77,7 +77,16 @@ class FieldListModelMoDem(AbstractModelMoDem):
         return self._importer
 
     def get_header(self):
-        return [fname if isinstance(fname, str) else fname.get_field_header() for fname in self.field_list]
+        ret = []
+        for fname in self.field_list:
+            if isinstance(fname, str):
+                val = fname
+            elif hasattr(fname, 'get_field_header'):
+                val = fname.get_field_header()
+            elif isinstance(fname, (tuple, list)):
+                val = fname[0]
+            ret.append(val)
+        return ret
 
     def modulate(self, obj):
         """Serialise obj using the provided field_list in Modem init.
@@ -92,6 +101,8 @@ class FieldListModelMoDem(AbstractModelMoDem):
                 row.append(getattr(obj, field))
             elif hasattr(field, 'modulate'):
                 row.append(field.modulate(obj))
+            elif isinstance(field, (tuple, list)):
+                row.append(field[1](getattr(obj, field[0])))
         return row
 
     def demodulate(self, obj, context):

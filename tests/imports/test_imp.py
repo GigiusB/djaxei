@@ -20,6 +20,7 @@ def row_loader_1(storage):
         except Exception as e:
             print(e)
         storage.setdefault(1, {})[id] = obj.id
+
     return _f
 
 
@@ -29,6 +30,7 @@ def row_loader_2(storage):
         data_dict['fk_id'] = storage[1][data_dict['fk_id']]
         obj = DemoModel2.objects.create(**data_dict)
         storage.setdefault(2, {})[id] = obj.id
+
     return _f
 
 
@@ -38,6 +40,7 @@ def row_loader_3(storage):
         data_dict['fk_id'] = storage[1][data_dict['fk_id']]
         obj = DemoModel3.objects.create(**data_dict)
         storage.setdefault(3, {})[id] = obj.id
+
     return _f
 
 
@@ -51,6 +54,7 @@ def row_loader_4(storage):
             data_dict['fk3_id'] = storage[3].get(data_dict['fk3_id'], data_dict['fk3_id'])
         obj = DemoModel4.objects.create(**data_dict)
         storage.setdefault(4, {})[id] = obj.id
+
     return _f
 
 
@@ -69,19 +73,21 @@ def loader_m1(mappings: dict, model_name: str, worksheet: Worksheet):
             new_obj = klass.objects.create(**data)
             mappings[model_name][oldid] = new_obj.id
 
+
 def modifier_m1(row, *args):
     row['j'] = json.loads(row['j'])
+
 
 def modifier_m2(row, mappings):
     row['fk_id'] = mappings['app1.demomodel2'][row['fk_id']]
 
+
 def modifier_m3(row, mappings):
     row['fk_id'] = mappings['app1.demomodel3'][row['fk_id']]
 
+
 def modifier_m4(row, mappings):
     row['fk_id'] = mappings['app1.demomodel4'][row['fk_id']]
-
-
 
 
 def loader_m2(mappings: dict, model_name: str, worksheet: Worksheet):
@@ -92,7 +98,7 @@ def loader_m2(mappings: dict, model_name: str, worksheet: Worksheet):
             headers = [c.value for c in row][1:]
         else:
             oldid = row[0].value
-            data = {h:row[z+1].value for z, h in enumerate(headers)}
+            data = {h: row[z + 1].value for z, h in enumerate(headers)}
 
             data['fk_id'] = mappings['app1.demomodel1'][data['fk_id']]
 
@@ -128,7 +134,8 @@ class TestImport(object):
             ),
             FieldListModelMoDem(
                 model='app1.demomodel4',
-                fields=['id', RemapperFieldModem('fk3_id', 'app1.demomodel3'), 'char', RemapperFieldModem('fk2_id', 'app1.demomodel2'), 'integer']
+                fields=['id', RemapperFieldModem('fk3_id', 'app1.demomodel3'), 'char',
+                        RemapperFieldModem('fk2_id', 'app1.demomodel2'), 'integer']
             ),
             # FieldListModelMoDem(
             #     'app1.demomodel2',
@@ -147,10 +154,9 @@ class TestImport(object):
 
         ret = importer.xls_import(Path(__file__).parent / 'exported.xlsx')
         assert DemoModel1.objects.count() == len(existing_records['app1.demomodel1']) + 1
-        assert DemoModel2.objects.count() == len(existing_records['app1.demomodel2']) + 3
-        assert DemoModel3.objects.count() == len(existing_records['app1.demomodel3']) + 3
+        assert DemoModel2.objects.count() == len(existing_records['app1.demomodel2']) + 4
+        assert DemoModel3.objects.count() == len(existing_records['app1.demomodel3']) + 4
         assert DemoModel4.objects.count() == len(existing_records['app1.demomodel4']) + 11
-
 
     # def test_importer(self, records4):
     #     dm1 = list(DemoModel1.objects.all())

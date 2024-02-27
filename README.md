@@ -13,7 +13,7 @@ A Python library project using:
 
 # Features
 
-- Requires Python >=3.6.1
+- Requires Python >=3.8, Django>=3.2
 - Currently work only with xlsxwriter
 
 - Could help if use [direnv](https://direnv.net/) in dev environment

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djaxei"
-version = "1.0.0"
+version = "1.1.0"
 description = "A django admin extension for importing exporting records from/to xls/ods"
 authors = ["Giovanni Bronzini <g.bronzini@gmail.com>"]
 license = "MIT"
@@ -13,14 +13,14 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8.5,<4"
-django = ">=1.11,<4"
+python = ">=3.8.7,<4"
+django = ">=3.2,<5"
 #openpyxl = { version = "<4", optional = true }
 #xlwt = {version = ">=1.2.0", optional = true}
 #xlsxwriter = {version = ">=1.2.8", optional = true}
 openpyxl = ">=3.0.0"
 
-[tool.poetry.dev-dependencies]
+#[tool.poetry.dev-dependencies]
 #pytest = "^6.2.5"
 #tox = "^3.24.4"
 #pytest-django = "^4.5.2"
@@ -44,6 +44,7 @@ openpyxl = ">=3.0.0"
 #[tool.poetry.group.dev.dependencies]
 #openpyxl = "^3.1.0"
 #xlsxwriter = "^3.0.7"
+pytz = "^2024.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.1"
