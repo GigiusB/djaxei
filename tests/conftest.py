@@ -10,7 +10,7 @@ import pytest
 from dateutil.tz import UTC
 from factory.fuzzy import FuzzyInteger, FuzzyDate, FuzzyChoice, FuzzyText, FuzzyDateTime
 
-from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
+from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, VeryLongNameModelDemoModel4
 
 
 @pytest.fixture(scope='session')
@@ -64,12 +64,12 @@ class DemoModel3Factory(factory.django.DjangoModelFactory):
         model = DemoModel3
 
 
-class DemoModel4Factory(factory.django.DjangoModelFactory):
+class VeryLongNameModelDemoModel4Factory(factory.django.DjangoModelFactory):
     integer = FuzzyInteger(1000)
     char = FuzzyText(length=10, prefix='dm4_')
 
     class Meta:
-        model = DemoModel4
+        model = VeryLongNameModelDemoModel4
 
 
 class DemoModel5Factory(factory.django.DjangoModelFactory):
@@ -77,7 +77,7 @@ class DemoModel5Factory(factory.django.DjangoModelFactory):
     char = FuzzyText(length=10, prefix='dm5_')
 
     class Meta:
-        model = DemoModel4
+        model = VeryLongNameModelDemoModel4
 
 
 @pytest.fixture
@@ -118,7 +118,7 @@ def records4(records2, records3):
     for n in range(15):
         master1 = random.choice(records2)
         master2 = random.choice(records3) if n % 3 != 0 else None
-        ret.append(DemoModel4Factory.create(fk2=master1, fk3=master2))
+        ret.append(VeryLongNameModelDemoModel4Factory.create(fk2=master1, fk3=master2))
     return ret
 
 

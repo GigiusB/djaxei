@@ -7,7 +7,7 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 from demoproject.app1.models import (DemoModel1, DemoModel2,
-                                     DemoModel3, DemoModel4,)
+                                     DemoModel3, VeryLongNameModelDemoModel4,)
 from django.db.models import Q, QuerySet
 from openpyxl.reader.excel import load_workbook
 
@@ -30,15 +30,15 @@ def root_generator(key):
     'root_fx_key, m1, m2, m3, m4',
     (
         pytest.param(
-            1, 'app1.demomodel1', 'app1.demomodel2', 'app1.DemoModel3', 'app1.DemoModel4',
+            1, 'app1.demomodel1', 'app1.demomodel2', 'app1.DemoModel3', 'app1.VeryLongNameModelDemoModel4',
             id='strings'
         ),
         pytest.param(
-            2, DemoModel1, DemoModel2, DemoModel3, DemoModel4,
+            2, DemoModel1, DemoModel2, DemoModel3, VeryLongNameModelDemoModel4,
             id='models'
         ),
         pytest.param(
-            3, DemoModel1, 'app1.demomodel2', DemoModel3, DemoModel4,
+            3, DemoModel1, 'app1.demomodel2', DemoModel3, VeryLongNameModelDemoModel4,
             id='mixed'
         ),
     )
@@ -77,7 +77,7 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
         # Read generated workbook
         results = {}
         wb = load_workbook(filename=fo.name, read_only=True)
-        assert sorted(wb.sheetnames) == ['app1.demomodel1', 'app1.demomodel2', 'app1.demomodel3', 'app1.demomodel4']
+        assert sorted(wb.sheetnames) == ['app1.demomodel1', 'app1.demomodel2', 'app1.demomodel3', 'app1.verylongnamemodeldemomodel4']
 
         for sheet in wb.worksheets:
             results[sheet.title] = []
@@ -114,8 +114,8 @@ def test_exporter(root_fx_key, m1, m2, m3, m4, recordset):
     ids3 = sorted([x[0] for x in results['app1.demomodel3'][1:]])
     assert sorted(list(DemoModel3.objects.filter(fk_id__in=root_ids).values_list('id', flat=True))) == ids3
 
-    # check DemoModel4
-    ids4 = sorted([x[0] for x in results['app1.demomodel4'][1:]])
+    # check VeryLongNameModelDemoModel4
+    ids4 = sorted([x[0] for x in results['app1.verylongnamemodeldemomodel4'][1:]])
     assert sorted(
-        list(DemoModel4.objects.filter(Q(fk3__fk__in=root_ids) | Q(fk2__fk__in=root_ids)).values_list('id', flat=True))
+        list(VeryLongNameModelDemoModel4.objects.filter(Q(fk3__fk__in=root_ids) | Q(fk2__fk__in=root_ids)).values_list('id', flat=True))
     ) == ids4

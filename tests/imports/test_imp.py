@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from djaxei import Importer
-from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, DemoModel4
+from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, VeryLongNameModelDemoModel4
 from djaxei.modems.field import DatetimeNonAwareModem, JsonToStringModem, RemapperFieldModem
 from djaxei.modems.model import FieldListModelMoDem
 
@@ -52,7 +52,7 @@ def row_loader_4(storage):
         # fk3_id may have not been remapped
         if data_dict['fk3_id'] is not None:
             data_dict['fk3_id'] = storage[3].get(data_dict['fk3_id'], data_dict['fk3_id'])
-        obj = DemoModel4.objects.create(**data_dict)
+        obj = VeryLongNameModelDemoModel4.objects.create(**data_dict)
         storage.setdefault(4, {})[id] = obj.id
 
     return _f
@@ -87,7 +87,7 @@ def modifier_m3(row, mappings):
 
 
 def modifier_m4(row, mappings):
-    row['fk_id'] = mappings['app1.demomodel4'][row['fk_id']]
+    row['fk_id'] = mappings['app1.verylongnamemodeldemomodel4'][row['fk_id']]
 
 
 def loader_m2(mappings: dict, model_name: str, worksheet: Worksheet):
@@ -114,7 +114,7 @@ class TestImport(object):
             'app1.demomodel1': list(DemoModel1.objects.all()),
             'app1.demomodel2': list(DemoModel2.objects.all()),
             'app1.demomodel3': list(DemoModel3.objects.all()),
-            'app1.demomodel4': list(DemoModel4.objects.all()),
+            'app1.verylongnamemodeldemomodel4': list(VeryLongNameModelDemoModel4.objects.all()),
         }
 
         modems = [
@@ -133,7 +133,7 @@ class TestImport(object):
                 fields=['id', RemapperFieldModem('fk_id', 'app1.demomodel1'), 'char', 'integer']
             ),
             FieldListModelMoDem(
-                model='app1.demomodel4',
+                model='app1.verylongnamemodeldemomodel4',
                 fields=['id', RemapperFieldModem('fk3_id', 'app1.demomodel3'), 'char',
                         RemapperFieldModem('fk2_id', 'app1.demomodel2'), 'integer']
             ),
@@ -146,7 +146,7 @@ class TestImport(object):
             #     ['id', 'fk_id', 'char', 'integer']
             # ),
             # FieldListModelMoDem(
-            #     'app1.demomodel4',
+            #     'app1.verylongnamemodeldemomodel4',
             #     ['id', 'fk3_id', 'char', 'fk2_id', 'integer']
             # ),
         ]
@@ -156,13 +156,13 @@ class TestImport(object):
         assert DemoModel1.objects.count() == len(existing_records['app1.demomodel1']) + 1
         assert DemoModel2.objects.count() == len(existing_records['app1.demomodel2']) + 4
         assert DemoModel3.objects.count() == len(existing_records['app1.demomodel3']) + 4
-        assert DemoModel4.objects.count() == len(existing_records['app1.demomodel4']) + 11
+        assert VeryLongNameModelDemoModel4.objects.count() == len(existing_records['app1.verylongnamemodeldemomodel4']) + 11
 
     # def test_importer(self, records4):
     #     dm1 = list(DemoModel1.objects.all())
     #     dm2 = list(DemoModel2.objects.all())
     #     dm3 = list(DemoModel3.objects.all())
-    #     dm4 = list(DemoModel4.objects.all())
+    #     dm4 = list(VeryLongNameModelDemoModel4.objects.all())
     #     fi = os.path.abspath(os.path.join(__file__, os.pardir, 'files', 'example_imp.xlsx'))
     #     storage = {}
     #     Importer().xls_import(fi,
@@ -170,10 +170,10 @@ class TestImport(object):
     #           ('demomodel1', row_loader_1(storage)),
     #           ('demomodel2', row_loader_2(storage)),
     #           ('demomodel3', row_loader_3(storage)),
-    #           ('demomodel4', row_loader_4(storage)),
+    #           ('verylongnamemodeldemomodel4', row_loader_4(storage)),
     #       ])
     #     )
     #     assert len(dm1) == DemoModel1.objects.count() - 1
     #     assert len(dm2) == DemoModel2.objects.count() - 3
     #     assert len(dm3) == DemoModel3.objects.count() - 3
-    #     assert len(dm4) == DemoModel4.objects.count() - 7
+    #     assert len(dm4) == VeryLongNameModelDemoModel4.objects.count() - 7

@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from demoproject.app1.models import DemoModel1, DemoModel4, DemoModel2, DemoModel3
+from demoproject.app1.models import DemoModel1, VeryLongNameModelDemoModel4, DemoModel2, DemoModel3
 from djaxei import Exporter
 
 

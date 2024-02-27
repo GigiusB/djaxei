@@ -38,7 +38,7 @@ class DemoModel3(models.Model):
     integer = models.IntegerField(blank=True, null=True)
 
 
-class DemoModel4(models.Model):
+class VeryLongNameModelDemoModel4(models.Model):
     fk2 = models.ForeignKey(DemoModel2,
                            on_delete=models.CASCADE)
     fk3 = models.ForeignKey(DemoModel3,

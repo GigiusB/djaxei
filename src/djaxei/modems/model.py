@@ -5,6 +5,8 @@ from openpyxl.workbook import Workbook
 
 from djaxei.modems.field import BaseFieldMoDem
 
+TABNAME_LIMIT = 31
+
 
 class AbstractModelMoDem:
     def __init__(self, model, *args, **kwargs):
@@ -29,7 +31,7 @@ class FieldListModelMoDemImporter:
 
     def __init__(self, remappings: dict, wb: Workbook, modem: AbstractModelMoDem) -> None:
         self.remappings = remappings
-        self.worksheet = wb[modem.model_label]
+        self.worksheet = wb[modem.model_label[:TABNAME_LIMIT]]
         self.modem = modem
         self.manager = apps.get_model(modem.model_label).objects
 
@@ -55,7 +57,7 @@ class FieldListModelMoDemImporter:
                         data[h] = field.demodulate(data[h], self.remappings)
 
                 new_obj = self.manager.create(**data)
-                self.remappings[self.modem.model_label][oldpk] = new_obj.id
+                self.remappings[self.modem.model_label[:TABNAME_LIMIT]][oldpk] = new_obj.id
 
 
 class FieldListModelMoDem(AbstractModelMoDem):

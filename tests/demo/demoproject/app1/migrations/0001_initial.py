@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DemoModel4',
+            name='VeryLongNameModelDemoModel4',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('char', models.CharField(blank=True, max_length=255, null=True)),
