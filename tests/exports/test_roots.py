@@ -2,7 +2,7 @@ import pytest
 import random
 
 from demoproject.app1.models import DemoModel1, VeryLongNameModelDemoModel4, DemoModel2, DemoModel3
-from djaxei import Exporter
+from djaxei.exp import Exporter
 
 
 def root_generator(key):

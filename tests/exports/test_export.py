@@ -11,7 +11,7 @@ from demoproject.app1.models import (DemoModel1, DemoModel2,
 from django.db.models import Q, QuerySet
 from openpyxl.reader.excel import load_workbook
 
-from djaxei import Exporter
+from djaxei.exp import Exporter
 from djaxei.modems.field import DatetimeNonAwareModem, JsonToStringModem
 from djaxei.modems.model import FieldListModelMoDem
 

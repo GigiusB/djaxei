@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from djaxei import Importer
+from djaxei.imp import Importer
 from demoproject.app1.models import DemoModel1, DemoModel2, DemoModel3, VeryLongNameModelDemoModel4
 from djaxei.modems.field import DatetimeNonAwareModem, JsonToStringModem, RemapperFieldModem
 from djaxei.modems.model import FieldListModelMoDem

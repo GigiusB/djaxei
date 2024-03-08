@@ -60,8 +60,6 @@ class ExcelMoDem(AbstractMoDem):
         return row
 
 
-
-
 class Exporter:
     def __init__(self, root, modems: list):
         """Create an exporter.
